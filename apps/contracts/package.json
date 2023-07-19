@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@hyperlane-xyz/core": "^1.4.2",
+    "@openzeppelin/contracts": "^4.9.2",
     "@openzeppelin/contracts-upgradeable": "^4.9.2"
   }
 }

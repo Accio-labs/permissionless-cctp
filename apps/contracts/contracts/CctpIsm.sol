@@ -81,7 +81,7 @@ contract CctpIsm is AbstractCcipReadIsm, ISpecifiesInterchainSecurityModule, Own
     }
 
     function getOffchainVerifyInfo(bytes calldata _message) external view override {
-        revert OffchainLookup(address(this), offchainUrls, _message, ChainlinkAggregator.process.selector, _message);
+        revert OffchainLookup(address(this), offchainUrls, _message, CctpIsm.process.selector, _message);
     }
 
     function process(bytes calldata _metadata, bytes calldata _message) external {
