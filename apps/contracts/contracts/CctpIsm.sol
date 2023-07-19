@@ -3,7 +3,6 @@ pragma solidity ^0.8.9;
 
 import {AbstractCcipReadIsm} from "@hyperlane-xyz/core/contracts/isms/ccip-read/AbstractCcipReadIsm.sol";
 import {
-    IInterchainSecurityModule,
     ISpecifiesInterchainSecurityModule
 } from "@hyperlane-xyz/core/contracts/interfaces/IInterchainSecurityModule.sol";
 import {ICircleMessageTransmitter} from
@@ -74,10 +73,6 @@ contract CctpIsm is AbstractCcipReadIsm, ISpecifiesInterchainSecurityModule, Own
 
     function getOffchainUrls() external view returns (string[] memory) {
         return offchainUrls;
-    }
-
-    function interchainSecurityModule() external view returns (IInterchainSecurityModule) {
-        return IInterchainSecurityModule(address(this));
     }
 
     function getOffchainVerifyInfo(bytes calldata _message) external view override {

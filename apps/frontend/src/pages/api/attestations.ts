@@ -64,7 +64,7 @@ const extractNonceFromMessage = (msg: string) => {
   console.log("msg:", msg);
   const nonce = msg.substring(154 + 240, 154 + 240 + 8 * 2); // 154 is offset to Hyperlane message body, 240 is offset to nonce
   console.log("nonce:", nonce);
-  return nonce;
+  return nonce.toLocaleLowerCase();
 };
 
 const executeGraphQLQuery = async (nonce: string) => {
