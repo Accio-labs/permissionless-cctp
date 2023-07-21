@@ -2,9 +2,6 @@
 pragma solidity ^0.8.9;
 
 import {AbstractCcipReadIsm} from "@hyperlane-xyz/core/contracts/isms/ccip-read/AbstractCcipReadIsm.sol";
-import {
-    ISpecifiesInterchainSecurityModule
-} from "@hyperlane-xyz/core/contracts/interfaces/IInterchainSecurityModule.sol";
 import {ICircleMessageTransmitter} from
     "@hyperlane-xyz/core/contracts/middleware/liquidity-layer/interfaces/circle/ICircleMessageTransmitter.sol";
 import {IMailbox} from "@hyperlane-xyz/core/contracts/interfaces/IMailbox.sol";
@@ -12,7 +9,7 @@ import {Message} from "@hyperlane-xyz/core/contracts/libs/Message.sol";
 
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract CctpIsm is AbstractCcipReadIsm, ISpecifiesInterchainSecurityModule, OwnableUpgradeable {
+contract CctpIsm is AbstractCcipReadIsm, OwnableUpgradeable {
     using Message for bytes;
 
     uint8 private constant CCTP_MESSAGE_OFFSET = 0;
