@@ -46,7 +46,7 @@ export default async function handler(
       .then((response) => {
         console.log("cctp response:", response.data);
         if (response.data.status == CCTP_API_STATUS_COMPLETE) {
-          return res.json(response.data.attestation);
+          return res.json({data: response.data.attestation});
         } else {
           return res.status(404).json(response.data);
         }
