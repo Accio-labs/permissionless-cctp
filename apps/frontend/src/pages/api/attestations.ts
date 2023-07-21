@@ -62,7 +62,8 @@ export default async function handler(
 
 const extractNonceFromMessage = (msg: string) => {
   console.log("msg:", msg);
-  const nonce = msg.substring(154 + 240, 154 + 240 + 8 * 2); // 154 is offset to Hyperlane message body, 240 is offset to nonce
+  const nonce = msg.substring(156 + 240, 156 + 240 + 8 * 2); // 156 is offset to Hyperlane message body, 240 is offset to nonce
+  // example message: 0x000000696600000005000000000000000000000000903C7F403AE2EB194241B0C4C8368D6CC95ABD080000A86900000000000000000000000050D7EADC7F417406310A81A0C3386E257DCF75F400000000000000000000000050D7EADC7F417406310A81A0C3386E257DCF75F4000000000000000000000000000000000000000000000000000000000000271000000000000000000000000
   console.log("nonce:", nonce);
   return nonce.toLocaleLowerCase();
 };
