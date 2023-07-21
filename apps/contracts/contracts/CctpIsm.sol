@@ -51,7 +51,7 @@ contract CctpIsm is AbstractCcipReadIsm, ISpecifiesInterchainSecurityModule, Own
     // TODO: rename this to verify after testing
     function verifyReal(bytes calldata _metadata, bytes calldata _message) external returns (bool) {
         bytes memory message = _metadata[CCTP_MESSAGE_OFFSET:CCTP_ATTESTATION_OFFSET];
-        bytes memory metadata = _metadata[CCTP_ATTESTATION_OFFSET:CCTP_ATTESTATION_OFFSET + 32];
+        bytes memory metadata = _metadata[CCTP_ATTESTATION_OFFSET:_metadata.length];
 
         return cctpMessageTransmitter.receiveMessage(message, metadata);
     }
@@ -59,7 +59,7 @@ contract CctpIsm is AbstractCcipReadIsm, ISpecifiesInterchainSecurityModule, Own
     // TODO: remove this function after testing
     function verify(bytes calldata _metadata, bytes calldata _message) external returns (bool) {
         bytes memory message = _metadata[CCTP_MESSAGE_OFFSET:CCTP_ATTESTATION_OFFSET];
-        bytes memory metadata = _metadata[CCTP_ATTESTATION_OFFSET:CCTP_ATTESTATION_OFFSET + 32];
+        bytes memory metadata = _metadata[CCTP_ATTESTATION_OFFSET:_metadata.length];
 
         // Just emit event for testing and do not call `cctpMessageTransmitter.receiveMessage`
         emit TestCctpIsmVerify(message, metadata);
