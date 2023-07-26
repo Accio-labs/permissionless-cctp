@@ -45,22 +45,11 @@ contract CctpIsm is AbstractCcipReadIsm, OwnableUpgradeable {
      * @param _metadata ABI encoded module metadata
      * @param _message Formatted Hyperlane message (see Message.sol).
      */
-    // TODO: rename this to verify after testing
-    function verifyReal(bytes calldata _metadata, bytes calldata _message) external returns (bool) {
-        bytes memory message = _metadata[CCTP_MESSAGE_OFFSET:CCTP_ATTESTATION_OFFSET];
-        bytes memory metadata = _metadata[CCTP_ATTESTATION_OFFSET:_metadata.length];
-
-        return cctpMessageTransmitter.receiveMessage(message, metadata);
-    }
-
-    // TODO: remove this function after testing
     function verify(bytes calldata _metadata, bytes calldata _message) external returns (bool) {
         bytes memory message = _metadata[CCTP_MESSAGE_OFFSET:CCTP_ATTESTATION_OFFSET];
         bytes memory metadata = _metadata[CCTP_ATTESTATION_OFFSET:_metadata.length];
 
-        // Just emit event for testing and do not call `cctpMessageTransmitter.receiveMessage`
-        emit TestCctpIsmVerify(message, metadata);
-        return true;
+        return cctpMessageTransmitter.receiveMessage(message, metadata);
     }
 
     function setOffchainUrls(string[] memory urls) external onlyOwner {
