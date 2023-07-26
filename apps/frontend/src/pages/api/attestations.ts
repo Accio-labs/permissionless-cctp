@@ -17,6 +17,11 @@ type QueryResponse = {
   };
 };
 
+const DOMAIN_ETH = 1;
+const DOMAIN_GOERLI = 5;
+const DOMAIN_AVAX = 43114;
+const DOMAIN_FUJI = 43113;
+
 const CCTP_API_ENDPOINT_TESTNET =
   "https://iris-api-sandbox.circle.com/v1/attestations/";
 // TODO: distinguish between testnet vs mainnet
@@ -36,13 +41,35 @@ export default async function handler(
     console.log("data:", data);
     console.log("sender:", sender);
 
+    const destinationDomain = extractDestinationDomainFromMessage(data);
+    console.log("destinationDomain:", destinationDomain)
+    let graphQLEndpoint = "";
+    let cctpEndpoint = "";
+    switch (destinationDomain) {
+      case DOMAIN_ETH:
+        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET
+        graphQLEndpoint = ""
+        break;
+      case DOMAIN_AVAX:
+        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET
+        graphQLEndpoint = ""
+        break;
+      case DOMAIN_GOERLI:
+        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET
+        graphQLEndpoint = "https://api.studio.thegraph.com/query/49312/cctp/version/latest"
+        break;
+      case DOMAIN_FUJI:
+        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET
+        graphQLEndpoint = "https://api.studio.thegraph.com/query/49312/cctp_fuji/version/latest"
+        break;
+    }
     const nonce = extractNonceFromMessage(data);
-    const cctpMsg = await executeGraphQLQuery(nonce);
+    const cctpMsg = await executeGraphQLQuery(graphQLEndpoint, nonce);
     console.log("cctpMsg:", cctpMsg);
     const cctpMsgHash = web3.utils.keccak256(cctpMsg);
     console.log("cctpMsgHash:", cctpMsgHash);
     return await axios
-      .get(CCTP_API_ENDPOINT_TESTNET + cctpMsgHash)
+      .get(cctpEndpoint + cctpMsgHash)
       .then((response) => {
         console.log("cctp response:", response.data);
         if (response.data.status == CCTP_API_STATUS_COMPLETE) {
@@ -60,6 +87,13 @@ export default async function handler(
   }
 }
 
+const extractDestinationDomainFromMessage = (msg: string) => {
+  let destinationDomain = msg.substring(12, 20)
+  destinationDomain = destinationDomain.replace(/^0+/, '');
+  destinationDomain = "0x" + destinationDomain
+  return parseInt(destinationDomain);
+}
+
 const extractNonceFromMessage = (msg: string) => {
   console.log("msg:", msg);
   const nonce = msg.substring(156 + 240, 156 + 240 + 8 * 2); // 156 is offset to Hyperlane message body, 240 is offset to nonce
@@ -68,10 +102,10 @@ const extractNonceFromMessage = (msg: string) => {
   return nonce.toLocaleLowerCase();
 };
 
-const executeGraphQLQuery = async (nonce: string) => {
+const executeGraphQLQuery = async (endpoint: string, nonce: string) => {
   const options = {
     method: "POST",
-    url: "https://api.studio.thegraph.com/query/49312/cctp/version/latest",
+    url: endpoint,
     headers: {
       "content-type": "application/json",
     },
