@@ -19,9 +19,6 @@ contract CctpIsm is AbstractCcipReadIsm, OwnableUpgradeable {
     IMailbox public mailbox;
     string[] public offchainUrls;
 
-    // Event for testing
-    event TestCctpIsmVerify(bytes message, bytes metadata);
-
     function initialize(
         ICircleMessageTransmitter _cctpMessageTransmitter,
         IMailbox _mailbox,
