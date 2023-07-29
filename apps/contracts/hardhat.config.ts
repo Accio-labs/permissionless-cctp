@@ -15,7 +15,12 @@ const config: HardhatUserConfig = {
     fuji: {
       url: 'https://api.avax-test.network/ext/bc/C/rpc',
       chainId: 43113,
-      accounts: [``],
+      accounts: [''],
+    },
+    arbitrumgoerli: {
+      url: 'https://arbitrum-goerli.publicnode.com',
+      chainId: 421613,
+      accounts: ['']
     },
   },
 };

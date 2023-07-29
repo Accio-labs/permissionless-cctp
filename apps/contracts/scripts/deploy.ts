@@ -19,6 +19,11 @@ const config: Config = {
     mailbox: '0xCC737a94FecaeC165AbCf12dED095BB13F037685',
     offchainUrls: ['https://permissionless-cctp.vercel.app/api/attestations']
   },
+  421613: { // arbitrum goerli
+    cctpMessageTransmitter: '0x109bc137cb64eab7c0b1dddd1edf341467dc2d35',
+    mailbox: '0xCC737a94FecaeC165AbCf12dED095BB13F037685',
+    offchainUrls: ['https://permissionless-cctp.vercel.app/api/attestations']
+  },
 };
 
 async function main() {
