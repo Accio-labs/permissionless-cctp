@@ -21,10 +21,11 @@ const DOMAIN_ETH = 1;
 const DOMAIN_GOERLI = 5;
 const DOMAIN_AVAX = 43114;
 const DOMAIN_FUJI = 43113;
+const DOMAIN_ARB = 42161;
+const DOMAIN_ARBGOERLI = 421613;
 
 const CCTP_API_ENDPOINT_TESTNET =
   "https://iris-api-sandbox.circle.com/v1/attestations/";
-// TODO: distinguish between testnet vs mainnet
 const CCTP_API_ENDPOINT_MAINNET =
   "https://iris-api.circle.com/v1/attestations/";
 
@@ -42,25 +43,36 @@ export default async function handler(
     console.log("sender:", sender);
 
     const destinationDomain = extractDestinationDomainFromMessage(data);
-    console.log("destinationDomain:", destinationDomain)
+    console.log("destinationDomain:", destinationDomain);
     let graphQLEndpoint = "";
     let cctpEndpoint = "";
     switch (destinationDomain) {
       case DOMAIN_ETH:
-        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET
-        graphQLEndpoint = ""
+        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
+        graphQLEndpoint = "";
         break;
       case DOMAIN_AVAX:
-        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET
-        graphQLEndpoint = ""
+        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
+        graphQLEndpoint = "";
+        break;
+      case DOMAIN_ARB:
+        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
+        graphQLEndpoint = "";
         break;
       case DOMAIN_GOERLI:
-        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET
-        graphQLEndpoint = "https://api.studio.thegraph.com/query/49312/cctp/version/latest"
+        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp/version/latest";
         break;
       case DOMAIN_FUJI:
-        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET
-        graphQLEndpoint = "https://api.studio.thegraph.com/query/49312/cctp_fuji/version/latest"
+        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp_fuji/version/latest";
+        break;
+      case DOMAIN_ARBGOERLI:
+        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp_arbgoerli/version/latest";
         break;
     }
     const nonce = extractNonceFromMessage(data);
@@ -73,7 +85,9 @@ export default async function handler(
       .then((response) => {
         console.log("cctp response:", response.data);
         if (response.data.status == CCTP_API_STATUS_COMPLETE) {
-          return res.json({data: cctpMsg + response.data.attestation.substring(2)});
+          return res.json({
+            data: cctpMsg + response.data.attestation.substring(2),
+          });
         } else {
           return res.status(404).json(response.data);
         }
@@ -88,11 +102,11 @@ export default async function handler(
 }
 
 const extractDestinationDomainFromMessage = (msg: string) => {
-  let destinationDomain = msg.substring(12, 20)
-  destinationDomain = destinationDomain.replace(/^0+/, '');
-  destinationDomain = "0x" + destinationDomain
+  let destinationDomain = msg.substring(12, 20);
+  destinationDomain = destinationDomain.replace(/^0+/, "");
+  destinationDomain = "0x" + destinationDomain;
   return parseInt(destinationDomain);
-}
+};
 
 const extractNonceFromMessage = (msg: string) => {
   console.log("msg:", msg);
