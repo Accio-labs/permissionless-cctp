@@ -23,6 +23,8 @@ const DOMAIN_AVAX = 43114;
 const DOMAIN_FUJI = 43113;
 const DOMAIN_ARB = 42161;
 const DOMAIN_ARBGOERLI = 421613;
+const DOMAIN_OP = 10;
+const DOMAIN_OPGOERLI = 420;
 
 const CCTP_API_ENDPOINT_TESTNET =
   "https://iris-api-sandbox.circle.com/v1/attestations/";
@@ -49,15 +51,23 @@ export default async function handler(
     switch (destinationDomain) {
       case DOMAIN_ETH:
         cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
-        graphQLEndpoint = "";
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp_eth/version/latest";
         break;
       case DOMAIN_AVAX:
         cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
-        graphQLEndpoint = "";
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp_avalanche/version/latest";
         break;
       case DOMAIN_ARB:
         cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
-        graphQLEndpoint = "";
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp_arbitrum/version/latest";
+        break;
+      case DOMAIN_OP:
+        cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp_optimism/version/latest";
         break;
       case DOMAIN_GOERLI:
         cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
@@ -73,6 +83,11 @@ export default async function handler(
         cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
         graphQLEndpoint =
           "https://api.studio.thegraph.com/query/49312/cctp_arbgoerli/version/latest";
+        break;
+      case DOMAIN_OPGOERLI:
+        cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
+        graphQLEndpoint =
+          "https://api.studio.thegraph.com/query/49312/cctp_opgoerli/version/latest";
         break;
     }
     const nonce = extractNonceFromMessage(data);
