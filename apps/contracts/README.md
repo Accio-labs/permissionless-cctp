@@ -1,13 +1,4 @@
-# Sample Hardhat Project
+# Testing
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+- Make sure you have a priv key with some native ETH in it (on networks goerli, fuji, optimism goerli, arbitrum goerli) as well as USDC (Get some on https://usdcfaucet.com/ and distribute it to other chains using https://goerli.hop.exchange/#/send?token=USDC&sourceNetwork=ethereum&destNetwork=optimism)
+- Run `yarn ts-node ./scripts/test-cctp-adapter-transfer-remote.ts --key <priv-key>`
