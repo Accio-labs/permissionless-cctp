@@ -11,7 +11,9 @@ import {
 
 import { CctpAdapterConfig, CctpAdapterDeployer } from "./CctpAdapterDeployer";
 
-import cctpConfig from "../configs/cctp-config.json";
+import cctpConfig from "../configs/cctp-adapter-deploy-config.json";
+import { Contract } from "typechain";
+import { writeJSON } from "./json";
 
 const buildCircleDomainMapping = (cctpConfig: any) => {
   const circleDomainMapping = [];
@@ -59,7 +61,14 @@ async function main() {
   const config = buildCctpAdapterConfigMap(signer.address, cctpConfig);
   const deployer = new CctpAdapterDeployer(multiProvider);
   const cctpAdapters = await deployer.deploy(config);
-  console.log("cctpAdapters: ", cctpAdapters);
+
+  // write addresses to artifacts
+  const deployedAddresses: ChainMap<Address> = {};
+  for (const chainId in cctpAdapters) {
+    const cctpAdapter = cctpAdapters[chainId];
+    deployedAddresses[chainId] = cctpAdapter.router.address;
+  }
+  writeJSON('./artifacts', 'cctp-adapter-addresses.json', deployedAddresses);
 }
 
 main()

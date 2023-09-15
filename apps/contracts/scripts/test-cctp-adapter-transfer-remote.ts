@@ -12,8 +12,8 @@ import { BigNumber, ethers } from "ethers";
 import yargs from "yargs";
 
 import { CctpAdapter__factory } from "../typechain-types";
-import cctpAdapters from "../configs/cctp-adapters.json";
-import cctpConfig from "../configs/cctp-config.json";
+import cctpAdapters from "../artifacts/cctp-adapter-addresses.json";
+import cctpConfig from "../configs/cctp-adapter-deploy-config.json";
 import { getMultiProvider, assertBytes32 } from "../src/config";
 
 const mergeConfigs = (cctpConfig: any, cctpAdapters: any) => {
@@ -27,7 +27,7 @@ const mergeConfigs = (cctpConfig: any, cctpAdapters: any) => {
   return cctpAdapters;
 };
 
-const transferAmount = 1000; // 0.001 USDC
+const MIN_AMOUNT = BigNumber.from(1000); // 0.001 USDC
 
 async function transferRemote(
   signer: ethers.Wallet,
@@ -35,22 +35,24 @@ async function transferRemote(
   multiProvider: MultiProvider,
   addresses: any
 ) {
-  for (let i = 0; i < length; i++) {
-    const chainId = Object.keys(addresses)[i];
-    const usdc = IERC20__factory.connect(
-      addresses[chainId].usdc,
-      multiProvider.getProvider(chainId)
-    );
-    const length = Object.keys(addresses).length;
-    if (
-      (await usdc.balanceOf(signer.address)).lt(
-        BigNumber.from(transferAmount).mul(length - 1)
-      )
-    ) {
-      throw new Error(`Insufficient funds on ${chainId}`);
-    }
+  // Need at least `transferAmount` on the first CctpAdapter contract defined in `artifacts/cctp-adapter-addresses.json`
+  const length = Object.keys(addresses).length;
+  const firstChainId = Object.keys(addresses)[0];
+  const usdc = IERC20__factory.connect(
+    addresses[firstChainId].usdc,
+    multiProvider.getProvider(firstChainId)
+  );
+  if (
+    (await usdc.balanceOf(signer.address)).lt(
+      BigNumber.from(MIN_AMOUNT).mul(length - 1)
+    )
+  ) {
+    throw new Error(`Insufficient funds on ${firstChainId}`);
   }
 
+  // Distribute USDC to all chains first and use the distributed amount for testing transfer
+  const distributionAmount = MIN_AMOUNT.div(length - 1);
+  const transferAmount = distributionAmount.div(length - 1);
   for (let i = 0; i < length; i++) {
     const chainId = Object.keys(addresses)[i];
     const chainConfig = addresses[chainId];
@@ -73,12 +75,16 @@ async function transferRemote(
       timedOut = true;
     }, timeout * 1000);
 
+    let amount = distributionAmount;
+    if (i !== 0) {
+      amount = transferAmount;
+    }
     // approve USDC
     await multiProvider.handleTx(
       chainId,
       usdc
         .connect(multiProvider.getSigner(chainId))
-        .approve(adapter.address, transferAmount * (length - 1))
+        .approve(adapter.address, amount.mul(length - 1))
     );
     const messages: Set<DispatchedMessage> = new Set();
     for (let j = 0; j < length; j++) {
@@ -96,7 +102,7 @@ async function transferRemote(
             .transferRemote(
               chainMetadata[destChainId].chainId,
               addressToBytes32(signer.address),
-              transferAmount,
+              amount,
               { value: value }
             )
         );
