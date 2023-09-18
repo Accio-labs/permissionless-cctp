@@ -35,7 +35,7 @@ async function transferRemote(
   multiProvider: MultiProvider,
   addresses: any
 ) {
-  // Need at least `transferAmount` on the first CctpAdapter contract defined in `artifacts/cctp-adapter-addresses.json`
+  // Need at least `transferAmount` on the first network defined in `artifacts/cctp-adapter-addresses.json`
   const length = Object.keys(addresses).length;
   const firstChainId = Object.keys(addresses)[0];
   const usdc = IERC20__factory.connect(
@@ -53,8 +53,7 @@ async function transferRemote(
   // Distribute USDC to all chains first and use the distributed amount for testing transfer
   const distributionAmount = MIN_AMOUNT.div(length - 1);
   const transferAmount = distributionAmount.div(length - 1);
-  for (let i = 0; i < length; i++) {
-    const chainId = Object.keys(addresses)[i];
+  for (const chainId of Object.keys(addresses)) {
     const chainConfig = addresses[chainId];
     const usdc = IERC20__factory.connect(
       chainConfig.usdc,
@@ -76,7 +75,7 @@ async function transferRemote(
     }, timeout * 1000);
 
     let amount = distributionAmount;
-    if (i !== 0) {
+    if (addresses.indexOf(chainId) !== 0) {
       amount = transferAmount;
     }
     // approve USDC
@@ -87,9 +86,8 @@ async function transferRemote(
         .approve(adapter.address, amount.mul(length - 1))
     );
     const messages: Set<DispatchedMessage> = new Set();
-    for (let j = 0; j < length; j++) {
-      if (i !== j) {
-        const destChainId = Object.keys(addresses)[j];
+    for (const destChainId of Object.keys(addresses)) {
+      if (chainId !== destChainId) {
         const gasLimit = await adapter.gasAmount();
         const value = await igp.quoteGasPayment(
           chainMetadata[destChainId].chainId,

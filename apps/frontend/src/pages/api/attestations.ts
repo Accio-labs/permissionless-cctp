@@ -1,21 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Axios from "axios";
 import web3 from "web3";
-
-type Query = {
-  query: string;
-  variables: string;
-};
-
-type QueryResponse = {
-  data: {
-    messageSents: [
-      {
-        message: string;
-      }
-    ];
-  };
-};
+import graphQLEndpoints from "../../config/graphql_endpoints.json";
 
 const DOMAIN_ETH = 1;
 const DOMAIN_GOERLI = 5;
@@ -30,8 +16,10 @@ const CCTP_API_ENDPOINT_TESTNET =
   "https://iris-api-sandbox.circle.com/v1/attestations/";
 const CCTP_API_ENDPOINT_MAINNET =
   "https://iris-api.circle.com/v1/attestations/";
-
 const CCTP_API_STATUS_COMPLETE = "complete";
+
+const OFFSET_TO_NONCE = 156 + 240; // 156 is offset to Hyperlane message body, 240 is offset to nonce in message body
+const NONCE_DATA_SIZE = 16;
 
 const axios = Axios.create();
 
@@ -51,44 +39,35 @@ export default async function handler(
     switch (destinationDomain) {
       case DOMAIN_ETH:
         cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp_eth/version/latest";
+        graphQLEndpoint = graphQLEndpoints.eth;
         break;
       case DOMAIN_AVAX:
         cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp_avalanche/version/latest";
+        graphQLEndpoint = graphQLEndpoints.avax;
         break;
       case DOMAIN_ARB:
         cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp_arbitrum/version/latest";
+        graphQLEndpoint = graphQLEndpoints.arbitrum;
         break;
       case DOMAIN_OP:
         cctpEndpoint = CCTP_API_ENDPOINT_MAINNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp_optimism/version/latest";
+        graphQLEndpoint = graphQLEndpoints.optimism;
         break;
       case DOMAIN_GOERLI:
         cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp/version/latest";
+        graphQLEndpoint = graphQLEndpoints.goerli;
         break;
       case DOMAIN_FUJI:
         cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp_fuji/version/latest";
+        graphQLEndpoint = graphQLEndpoints.fuji;
         break;
       case DOMAIN_ARBGOERLI:
         cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp_arbgoerli/version/latest";
+        graphQLEndpoint = graphQLEndpoints.arbgoerli;
         break;
       case DOMAIN_OPGOERLI:
         cctpEndpoint = CCTP_API_ENDPOINT_TESTNET;
-        graphQLEndpoint =
-          "https://api.studio.thegraph.com/query/49312/cctp_opgoerli/version/latest";
-        break;
+        graphQLEndpoint = graphQLEndpoints.opgoerli;
     }
     const nonce = extractNonceFromMessage(data);
     const cctpMsg = await executeGraphQLQuery(graphQLEndpoint, nonce);
@@ -125,7 +104,7 @@ const extractDestinationDomainFromMessage = (msg: string) => {
 
 const extractNonceFromMessage = (msg: string) => {
   console.log("msg:", msg);
-  const nonce = msg.substring(156 + 240, 156 + 240 + 8 * 2); // 156 is offset to Hyperlane message body, 240 is offset to nonce
+  const nonce = msg.substring(OFFSET_TO_NONCE, OFFSET_TO_NONCE + NONCE_DATA_SIZE);
   // example message: 0x000000696600000005000000000000000000000000903C7F403AE2EB194241B0C4C8368D6CC95ABD080000A86900000000000000000000000050D7EADC7F417406310A81A0C3386E257DCF75F400000000000000000000000050D7EADC7F417406310A81A0C3386E257DCF75F4000000000000000000000000000000000000000000000000000000000000271000000000000000000000000
   console.log("nonce:", nonce);
   return nonce.toLocaleLowerCase();

@@ -90,13 +90,6 @@ export class CctpAdapterDeployer extends HyperlaneRouterDeployer<
     return contracts.router;
   }
 
-  async enrollRemoteRouters(
-    contractsMap: HyperlaneContractsMap<CctpAdapterFactories>,
-    configMap: ChainMap<CctpAdapterConfig>
-  ): Promise<void> {
-    await super.enrollRemoteRouters(contractsMap, configMap);
-  }
-
   async deployContracts(
     chain: string,
     config: CctpAdapterConfig
