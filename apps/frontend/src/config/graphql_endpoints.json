@@ -1,0 +1,10 @@
+{
+  "eth": "https://api.studio.thegraph.com/query/49312/cctp_eth/version/latest",
+  "avax": "https://api.studio.thegraph.com/query/49312/cctp_avalanche/version/latest",
+  "arbitrum": "https://api.studio.thegraph.com/query/49312/cctp_arbitrum/version/latest",
+  "optimism": "https://api.studio.thegraph.com/query/49312/cctp_optimism/version/latest",
+  "goerli": "https://api.studio.thegraph.com/query/49312/cctp/version/latest",
+  "fuji": "https://api.studio.thegraph.com/query/49312/cctp_fuji/version/latest",
+  "arbgoerli": "https://api.studio.thegraph.com/query/49312/cctp_arbgoerli/version/latest",
+  "opgoerli": "https://api.studio.thegraph.com/query/49312/cctp_opgoerli/version/latest"
+}
