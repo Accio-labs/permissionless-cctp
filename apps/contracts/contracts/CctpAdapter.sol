@@ -132,6 +132,7 @@ contract CctpAdapter is
 
     /**
      * @notice Transfers `_amount` token to `_recipientAddress` on `_destinationDomain` chain.
+     * @dev Send IGP amount as msg.value since this function internally calls `dispatchWithGas`.
      * @param _destinationDomain The identifier of the destination chain.
      * @param _recipientAddress The address of the recipient on the destination chain.
      * @param _amount The amount of tokens to transfer.
