@@ -75,7 +75,7 @@ async function transferRemote(
     }, timeout * 1000);
 
     let amount = distributionAmount;
-    if (addresses.indexOf(chainId) !== 0) {
+    if (Object.values(addresses).indexOf(chainId) !== 0) {
       amount = transferAmount;
     }
     // approve USDC
