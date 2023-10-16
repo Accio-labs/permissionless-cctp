@@ -12,12 +12,12 @@ Steps to deploy:
 1. Modify the `cctp-adapter-deploy-config.json` to specify the networks you want to deploy to
 2. Make sure that you have native tokens on all the networks you want to deploy to (we'll be using a single account for all operations)
 3. Run `yarn ts-node ./src/deploy.ts --key <priv-key>`
-4. Deployed contract addresses will be written to `./artifacts/cctp-adapter-addresses.json`
+4. Deployed contract addresses will be written to `./configs/cctp-adapter-transfer-test-config.json`
 
 # Testing
 
 - Make sure you have a priv key with some native ETH in it (the network with ETH should be specified first in `cctp-adapter-deploy-config.json`) as well as USDC (Get some on https://usdcfaucet.com/ and the following script will distribute it to other chains)
-- If you have not deployed the contracts, follow the steps above to deploy them. If you want to use already deployed contracts, you need to create a new file `./artifacts/cctp-adapter-addresses.json` and fill it with addresses of the already deployed contracts. For example:
+- If you have not deployed the contracts, follow the steps above to deploy them. If you want to use already deployed contracts, you need to update the following file `./configs/cctp-adapter-transfer-test-config.json` with addresses of the already deployed contracts. For example:
 
   ```
   {

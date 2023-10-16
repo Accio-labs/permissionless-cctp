@@ -12,7 +12,7 @@ import { BigNumber, ethers } from "ethers";
 import yargs from "yargs";
 
 import { CctpAdapter__factory } from "../typechain-types";
-import cctpAdapters from "../artifacts/cctp-adapter-addresses.json";
+import cctpAdapters from "../configs/cctp-adapter-transfer-test-config.json";
 import cctpConfig from "../configs/cctp-adapter-deploy-config.json";
 import { getMultiProvider, assertBytes32 } from "../src/config";
 
@@ -35,7 +35,7 @@ async function transferRemote(
   multiProvider: MultiProvider,
   addresses: any
 ) {
-  // Need at least `transferAmount` on the first network defined in `artifacts/cctp-adapter-addresses.json`
+  // Need at least `transferAmount` on the first network defined in `../configs/cctp-adapter-transfer-test-config.json`
   const length = Object.keys(addresses).length;
   const firstChainId = Object.keys(addresses)[0];
   const usdc = IERC20__factory.connect(

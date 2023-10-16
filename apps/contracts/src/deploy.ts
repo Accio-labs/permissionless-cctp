@@ -62,13 +62,13 @@ async function main() {
   const deployer = new CctpAdapterDeployer(multiProvider);
   const cctpAdapters = await deployer.deploy(config);
 
-  // write addresses to artifacts
+  // write addresses to configs
   const deployedAddresses: ChainMap<Address> = {};
   for (const chainId in cctpAdapters) {
     const cctpAdapter = cctpAdapters[chainId];
     deployedAddresses[chainId] = cctpAdapter.router.address;
   }
-  writeJSON('./artifacts', 'cctp-adapter-addresses.json', deployedAddresses);
+  writeJSON('./configs', 'cctp-adapter-transfer-test-config.json', deployedAddresses);
 }
 
 main()
